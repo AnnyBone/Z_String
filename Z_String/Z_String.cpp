@@ -14,7 +14,7 @@ Z_String::Z_String() {}
 //Constructor
 //Copy (Shallow copy)
 //******
-Z_String::Z_String( const char &c ) {
+Z_String::Z_String( const INT8 &c ) {
 	char arr[2];
 	arr[0] = c;
 	arr[1] = '\0';
@@ -26,7 +26,7 @@ Z_String::Z_String( const char &c ) {
 //Constructor
 //from c-string
 //******
-Z_String::Z_String( const char *cStr ) {
+Z_String::Z_String( const INT8 *cStr ) {
 	const size_t l = strlen( cStr );
 	if ( l > 0 ) {
 		Concat( cStr, l);
@@ -67,7 +67,7 @@ Z_String::Z_String( const Z_String& str, const size_t pos, const size_t len ) {
 //Constructor
 //From buffer
 //******
-Z_String::Z_String( const char *cStr, size_t len ) {
+Z_String::Z_String( const INT8 *cStr, size_t len ) {
 	if ( len > 0 && len <= strlen(cStr) ) {
 		Concat( cStr, len );
 	}
@@ -80,7 +80,7 @@ Z_String::Z_String( const char *cStr, size_t len ) {
 //Constructor
 //Fill
 //******
-Z_String::Z_String( const size_t n, const char c ) {
+Z_String::Z_String( const size_t n, const INT8 c ) {
 	if ( n > 0 ) {
 		Concat( "c", n );
 
@@ -125,7 +125,7 @@ Z_String& Z_String::operator=( const Z_String &str ) {
 //c-string
 //Observe that no memory is not deleted, size will not be same as cStr size.
 //******
-Z_String& Z_String::operator=( const char* cStr ) {
+Z_String& Z_String::operator=( const INT8* cStr ) {
 	if ( cStr[0] != '\0' ) {
 		this->length = 0;
 		Concat( cStr, strlen( cStr ) );
@@ -138,7 +138,7 @@ Z_String& Z_String::operator=( const char* cStr ) {
 //character
 //Observe that no memory is not deleted, size will not be same as c size.
 //******
-Z_String& Z_String::operator=( const char &c ) {
+Z_String& Z_String::operator=( const INT8 &c ) {
 	this->length = 0;
 
 	char arr[2];
@@ -162,7 +162,7 @@ Z_String& Z_String::operator += ( const Z_String &str ) {
 //oprator+=
 //character
 //******
-Z_String& Z_String::operator += ( const char *cStr ) {
+Z_String& Z_String::operator += ( const INT8 *cStr ) {
 	Concat(cStr, strlen(cStr));
 	return *this;
 }
@@ -171,7 +171,7 @@ Z_String& Z_String::operator += ( const char *cStr ) {
 //oprator+=
 //character
 //******
-Z_String& Z_String::operator += ( const char &c ) {
+Z_String& Z_String::operator += ( const INT8 &c ) {
 	char arr[2];
 	arr[0] = c;
 	arr[1] = '\0';
@@ -314,8 +314,8 @@ std::ostream &operator <<( std::ostream &output, const Z_String &string ) {
 void Z_String::GetInput( std::istream &input, Z_String &string ) {
 	string = ""; //Empty string
 
-	char buffer[4];
-	char c;
+	INT8 buffer[4];
+	INT8 c;
 	int i = 0;
 	while ( input.get( c ) ) {
 		buffer[i] = c;
@@ -344,89 +344,264 @@ std::istream &operator >>( std::istream  &input, Z_String &string ) {
 	return input;
 }
 
-bool Z_String::operator == ( const Z_String& rhs ) noexcept {
-	return compare( rhs ) == 0;
+//bool Z_String::operator == ( const Z_String &rhs ) _NOEXCEPT {
+//	return compare( rhs ) == 0;
+//}
+//
+//bool Z_String::operator == ( const Z_String &rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator == ( const INT8 *rhs ) {
+//	return compare( rhs ) == 0;
+//}
+//
+//bool Z_String::operator != ( const Z_String &rhs ) _NOEXCEPT {
+//	return compare( rhs.string ) > 0 && compare(rhs.string) < 0;
+//}
+//
+//bool Z_String::operator != ( const Z_String &rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator != ( const INT8 *rhs ) {
+//	return compare( rhs ) > 0 && compare( rhs ) < 0;
+//}
+//
+//bool Z_String::operator <  ( const Z_String &rhs ) _NOEXCEPT {
+//	return rhs.string < 0;
+//}
+//
+//bool Z_String::operator <  ( const Z_String &rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator <  ( const INT8 *rhs ) {
+//	return rhs < 0;
+//}
+//
+//bool Z_String::operator <= ( const Z_String &rhs ) _NOEXCEPT {
+//
+//}
+//
+//bool Z_String::operator <= ( const Z_String &rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator <= ( const char* rhs ) {
+//
+//}
+//
+//bool Z_String::operator >  ( const Z_String &rhs ) _NOEXCEPT {
+//	return rhs.string > 0;
+//}
+//
+//bool Z_String::operator >  ( const Z_String &rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator >  ( const char *rhs ) {
+//	return rhs > 0;
+//}
+//
+//bool Z_String::operator >= ( const Z_String& rhs ) _NOEXCEPT {
+//
+//}
+//
+//bool Z_String::operator >= ( const Z_String& rhs ) {
+//	//TODO!
+//}
+//
+//bool Z_String::operator >= ( const char* rhs ) {
+//
+//}
+
+//******
+// C_Str
+//****** 
+const char* Z_String::C_Str() const _NOEXCEPT {
+	return string;
 }
 
-bool Z_String::operator == ( const Z_String& rhs ) {
-	//TODO!
+//******
+// Data
+//****** 
+const char* Z_String::Data() const _NOEXCEPT {
+	return string;
 }
 
-bool Z_String::operator == ( const char* rhs ) {
-	return compare( rhs ) == 0;
+//******
+// Copy
+//****** 
+size_t Z_String::Copy( INT8 *cStr, const size_t &len, const size_t &pos ) const {
+	if ( (pos + len) <= this->length ) {
+		memcpy( cStr, this->string + pos, len );
+		return len;
+	}
+	return 0;
 }
 
-bool Z_String::operator != ( const Z_String& rhs ) noexcept {
-	return compare( rhs.string ) > 0 && compare(rhs.string) < 0;
+//******
+// Clear
+//****** 
+void Z_String::Clear() _NOEXCEPT {
+	if ( size > 0 ) {
+		this->string[0] = '\0';
+		this->length = 0;
+	}
 }
 
-bool Z_String::operator != ( const Z_String& rhs ) {
-	//TODO!
+//******
+// Capacity
+//****** 
+size_t Z_String::Capacity() const _NOEXCEPT {
+	return this->size;
 }
 
-bool Z_String::operator != ( const char* rhs ) {
-	return compare( rhs ) > 0 && compare( rhs ) < 0;
+//******
+// Back
+//****** 
+INT8 Z_String::Back() {
+	if ( size > 0 && length > 0 ) {
+		return string[length -1];
+	}
 }
 
-bool Z_String::operator <  ( const Z_String& rhs ) noexcept {
-	return rhs.string < 0;
+//******
+// Back
+//****** 
+const INT8 Z_String::Back() const {
+	if ( size > 0 && length > 0 ) {
+		return string[length -1];
+	}
 }
 
-bool Z_String::operator <  ( const Z_String& rhs ) {
-	//TODO!
+char& Z_String::At( const size_t pos ) {
+	if ( pos > this->length ) {
+		throw std::out_of_range( "AT" );
+	}
+	return this->string[pos];
 }
 
-bool Z_String::operator <  ( const char* rhs ) {
-	return rhs < 0;
+const char& Z_String::At( const size_t pos ) const {
+	if ( pos > this->length ) {
+		throw std::out_of_range( "AT" );
+	}
+	return this->string[pos];
 }
 
-bool Z_String::operator <= ( const Z_String& rhs ) noexcept {
+
+//******
+//Append
+//******
+size_t Z_String::Length() const {
+	return this->length;
+}
+
+//******
+//Append
+// string
+//******
+Z_String& Z_String::Append( const Z_String &str ) {
+	if ( str.length > 0 ) {
+		Concat( str.string, str.length );
+	}
+	return *this;
+}
+
+//******
+//Append
+// substring
+//******
+Z_String& Z_String::Append( const Z_String &str, const size_t &subpos, const size_t &sublen ) {
+	if ( str.length > 0  && (subpos + sublen) <= str.length) {
+		Concat( str.string + subpos, sublen );
+	}
+	return *this;
+}
+
+//******
+//Append
+// c-string
+//******
+Z_String& Z_String::Append( const char *cStr ) {
+	if ( Strlen( cStr ) > 0 ) {
+		Concat( cStr, Strlen( cStr ) );
+	}
+	return *this;
+}
+
+//******
+//Append
+// buffer
+//******
+Z_String& Z_String::Append( const char *cStr, const size_t &n ) {
+	if ( Strlen( cStr ) > 0 ) {
+		Concat( cStr, n );
+	}
+	return *this;
+}
+
+//******
+//Append
+// fill
+//******
+Z_String& Z_String::Append( const size_t &n, const char &c ) {
+	if ( n > 0 ) {
+		Concat( "c", n );
+
+		memset( this->string, c, n );
+		this->string[length] = '\0';
+	} 
+	return *this;
+}
+
+//******
+//Assign (string)
+//******
+Z_String& Z_String::Assign( const Z_String &str ) {
 
 }
 
-bool Z_String::operator <= ( const Z_String& rhs ) {
-	//TODO!
-}
-
-bool Z_String::operator <= ( const char* rhs ) {
-
-}
-
-bool Z_String::operator >  ( const Z_String& rhs ) noexcept {
-	return rhs.string > 0;
-}
-
-bool Z_String::operator >  ( const Z_String& rhs ) {
-	//TODO!
-}
-
-bool Z_String::operator >  ( const char* rhs ) {
-	return rhs > 0;
-}
-
-bool Z_String::operator >= ( const Z_String& rhs ) noexcept {
+//******
+//Assign (substring)
+//******
+Z_String& Z_String::Assign( const Z_String &str, const size_t subpos, const size_t sublen = npos ) {
 
 }
 
-bool Z_String::operator >= ( const Z_String& rhs ) {
-	//TODO!
+//******
+//Assign (c-string)
+//******
+Z_String& Z_String::Assign( const INT8 *cStr ) {
+
 }
 
-bool Z_String::operator >= ( const char* rhs ) {
+//******
+//Assign (buffer)
+//******
+Z_String& Z_String::Assign( const INT8 *cStr, const size_t n ) {
+
+}
+
+//******
+//Assign (fill)
+//******
+Z_String& Z_String::Assign( size_t n, const INT8 &c ) {
 
 }
 
 //******
 // Concat
 //****** 
-void Z_String::Concat( const char *cStr, const size_t &len ) {
+void Z_String::Concat( const INT8 *cStr, const size_t &len ) {
 	if ( this->size == 0 ) {
 		this->size += len * this->multiplier;
 		this->string = DBG_NEW char[this->size];
 
 	}
 	else if ( this->size < this->length + len +1) {
-		const char *tmp = this->string;
+		const INT8 *tmp = this->string;
 
 		this->size += len * this->multiplier;
 		this->string = DBG_NEW char[this->size];
@@ -441,7 +616,10 @@ void Z_String::Concat( const char *cStr, const size_t &len ) {
 	string[this->length] = '\0';
 }
 
-size_t Z_String::strlen( const char *cStr ) {
+//******
+// Strlen
+//****** 
+size_t Z_String::Strlen( const INT8 *cStr ) const {
 	size_t len = 0;
 	while ( cStr[len] != '\0' ) {
 		++len;
