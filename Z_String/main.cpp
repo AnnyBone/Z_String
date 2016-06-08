@@ -95,6 +95,7 @@ int main() {
 	string2 = "hello world";
 	Assert_String( string1.Compare( string2 ), 0, "function Compare(string) = 0" );
 
+	//Compare
 	string1.Clear();
 	string2.Clear();
 	Assert_String( string1.Compare( string2 ), 0, "function Compare(string) = 0" );
