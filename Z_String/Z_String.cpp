@@ -3,7 +3,7 @@
 #include <string>
 #include <cmath>
 
-const size_t npos = -1;
+const int Z_String::npos = -1;
 
 //******
 //Constructor
@@ -28,9 +28,9 @@ Z_String::Z_String( const INT8 &c ) {
 //from c-string
 //******
 Z_String::Z_String( const INT8 *cStr ) {
-	const size_t l = Strlen( cStr );
+	const int l = Strlen( cStr );
 	if ( l > 0 ) {
-		Concat( cStr, l);
+		Concat( cStr, l );
 	}
 }
 
@@ -39,7 +39,7 @@ Z_String::Z_String( const INT8 *cStr ) {
 //Copy (deep copy)
 //Observe that no memory is not deleted, size will not be same as Z_String size parameter.
 //******
-Z_String::Z_String( const Z_String &str )  {
+Z_String::Z_String( const Z_String &str ) {
 	if ( str.length > 0 ) {
 		Concat( str.string, str.length );
 	}
@@ -54,13 +54,13 @@ Z_String::Z_String( const Z_String &str )  {
 //******
 Z_String::Z_String( const Z_String& str, const size_t &pos, const size_t &len ) {
 	if ( len > 0 && len <= str.length &&
-		 pos >= 0 && 
+		 pos >= 0 &&
 		 pos + len <= str.length ) {
 
 		Concat( str.string + pos, len );
 	}
 	else {
-		throw std::out_of_range( "substring");
+		throw std::out_of_range( "substring" );
 	}
 }
 
@@ -69,7 +69,7 @@ Z_String::Z_String( const Z_String& str, const size_t &pos, const size_t &len ) 
 //From buffer
 //******
 Z_String::Z_String( const INT8 *cStr, const size_t &len ) {
-	if ( len > 0 && len <= Strlen(cStr) ) {
+	if ( len > 0 && len <= Strlen( cStr ) ) {
 		Concat( cStr, len );
 	}
 	else {
@@ -110,7 +110,7 @@ Z_String::Z_String( const Z_String &&string ) {
 //******
 Z_String::~Z_String() {
 	if ( size > 0 ) {
-		delete []string;
+		delete[]string;
 	}
 }
 
@@ -168,7 +168,7 @@ Z_String& Z_String::operator += ( const Z_String &str ) {
 //character
 //******
 Z_String& Z_String::operator += ( const INT8 *cStr ) {
-	Concat(cStr, Strlen(cStr));
+	Concat( cStr, Strlen( cStr ) );
 	return *this;
 }
 
@@ -310,7 +310,7 @@ const INT8& Z_String::operator[] ( const size_t &pos ) const {
 //friend function to Z_String
 //****** 
 std::ostream &operator <<( std::ostream &output, const Z_String &string ) {
-		return output << string.string;
+	return output << string.string;
 }
 
 //******
@@ -325,10 +325,11 @@ void Z_String::GetInput( std::istream &input, Z_String &string ) {
 	while ( input.get( c ) ) {
 		buffer[i] = c;
 		++i;
-		if ( c == '\n' ) { 
+		if ( c == '\n' ) {
 			break;
 
-		} else if ( i == 3 ) {
+		}
+		else if ( i == 3 ) {
 			buffer[3] = '\0';
 			Concat( buffer, i );
 
@@ -336,7 +337,7 @@ void Z_String::GetInput( std::istream &input, Z_String &string ) {
 		}
 	}
 
-	buffer[i -1] = '\0';
+	buffer[i - 1] = '\0';
 	Concat( buffer, i );
 }
 
@@ -439,7 +440,7 @@ const INT8* Z_String::Data() const _NOEXCEPT {
 //Copy
 //****** 
 size_t Z_String::Copy( INT8 *cStr, const size_t &len, const size_t &pos ) const {
-	if ( Strlen(cStr) > 0 && (pos + len) <= this->length ) {
+	if ( Strlen( cStr ) > 0 && ( pos + len ) <= this->length ) {
 		memcpy( cStr, this->string + pos, len );
 		return len;
 	}
@@ -467,32 +468,22 @@ size_t Z_String::Capacity() const _NOEXCEPT {
 //Back
 //****** 
 INT8 Z_String::Back() {
-	if ( size > 0 && length > 0 ) {
-		return string[length -1];
-	}
+	return Internal_Back();
 }
 
 //******
 //Back
 //****** 
 const INT8 Z_String::Back() const {
-	if ( size > 0 && length > 0 ) {
-		return string[length -1];
-	}
+	return Internal_Back();
 }
 
 INT8& Z_String::At( const size_t &pos ) {
-	if ( pos > this->length ) {
-		throw std::out_of_range( "AT" );
-	}
-	return this->string[pos];
+	return Internal_At( pos );
 }
 
 const INT8& Z_String::At( const size_t &pos ) const {
-	if ( pos > this->length ) {
-		throw std::out_of_range( "AT" );
-	}
-	return this->string[pos];
+	return Internal_At( pos );
 }
 
 //******
@@ -502,7 +493,7 @@ const INT8& Z_String::At( const size_t &pos ) const {
 //this->string <= rhs.string return -1;
 //this->string >= rhs.string return 1;
 //******
-int Z_String::Compare( const Z_String &str ) const _NOEXCEPT {
+size_t Z_String::Compare( const Z_String &str ) const _NOEXCEPT {
 	return StrCmp( this->string, str.string );
 }
 
@@ -513,9 +504,9 @@ int Z_String::Compare( const Z_String &str ) const _NOEXCEPT {
 //obj.string <= str.string return -1;
 //obj.string >= str.string return 1;
 //******
-int Z_String::Compare( const size_t &pos, const size_t &len, const Z_String &str ) const {
+size_t Z_String::Compare( const size_t &pos, const size_t &len, const Z_String &str ) const {
 	Z_String tmp( str.string + pos, len );
-	return StrCmp( this->string, tmp.string);
+	return StrCmp( this->string, tmp.string );
 }
 
 //******
@@ -525,7 +516,7 @@ int Z_String::Compare( const size_t &pos, const size_t &len, const Z_String &str
 //obj.string <= str.string return -1;
 //obj.string >= str.string return 1;
 //******
-int Z_String::Compare( const size_t &lhsPos, const size_t &lhsLen, const Z_String &rhsStr, const size_t &rhsPos, const size_t &rhsLen ) const {
+size_t Z_String::Compare( const size_t &lhsPos, const size_t &lhsLen, const Z_String &rhsStr, const size_t &rhsPos, const size_t &rhsLen ) const {
 	Z_String tmpRhs( rhsStr.string + rhsPos, rhsLen );
 	Z_String tmpLhs( this->string + lhsPos, lhsLen );
 	return StrCmp( tmpLhs.string, tmpRhs.string );
@@ -538,7 +529,7 @@ int Z_String::Compare( const size_t &lhsPos, const size_t &lhsLen, const Z_Strin
 //obj.string <= str.string return -1;
 //obj.string >= str.string return 1;
 //******
-int Z_String::Compare( const INT8* cStr ) const {
+size_t Z_String::Compare( const INT8* cStr ) const {
 	return StrCmp( this->string, cStr );
 }
 
@@ -549,7 +540,7 @@ int Z_String::Compare( const INT8* cStr ) const {
 //obj.string <= str.string return -1;
 //obj.string >= str.string return 1;
 //******
-int Z_String::Compare( const size_t &pos, const size_t &len, const INT8 *cStr ) const {
+size_t Z_String::Compare( const size_t &pos, const size_t &len, const INT8 *cStr ) const {
 	Z_String tmp( cStr + pos, len );
 	return StrCmp( this->string, tmp.string );
 }
@@ -561,7 +552,7 @@ int Z_String::Compare( const size_t &pos, const size_t &len, const INT8 *cStr ) 
 //obj.string <= str.string return -1;
 //obj.string >= str.string return 1;
 //******
-int Z_String::Compare( const size_t &pos, const size_t &len, const INT8 *cStr, const size_t &n ) const {
+size_t Z_String::Compare( const size_t &pos, const size_t &len, const INT8 *cStr, const size_t &n ) const {
 	throw std::out_of_range( "Function is not implemented!!!" );
 	return 0; //This function makes no sence, both len and n as parameters in functionhead, why? We already has Compare for c-string!
 }
@@ -578,10 +569,7 @@ size_t Z_String::Length() const {
 //string
 //******
 Z_String& Z_String::Append( const Z_String &str ) {
-	if ( str.length > 0 ) {
-		Concat( str.string, str.length );
-	}
-	return *this;
+	return Internal_Append( str.string, str.length );
 }
 
 //******
@@ -589,8 +577,8 @@ Z_String& Z_String::Append( const Z_String &str ) {
 //substring
 //******
 Z_String& Z_String::Append( const Z_String &str, const size_t &subpos, const size_t &sublen ) {
-	if ( str.length > 0  && (subpos + sublen) <= str.length) {
-		Concat( str.string + subpos, sublen );
+	if ( ( subpos + sublen ) <= str.length ) {
+		return Internal_Append( str.string + subpos, sublen );
 	}
 	return *this;
 }
@@ -600,10 +588,7 @@ Z_String& Z_String::Append( const Z_String &str, const size_t &subpos, const siz
 //c-string
 //******
 Z_String& Z_String::Append( const INT8 *cStr ) {
-	if ( Strlen( cStr ) > 0 ) {
-		Concat( cStr, Strlen( cStr ) );
-	}
-	return *this;
+	return Internal_Append( cStr, strlen(cStr) );
 }
 
 //******
@@ -611,9 +596,8 @@ Z_String& Z_String::Append( const INT8 *cStr ) {
 //buffer
 //******
 Z_String& Z_String::Append( const INT8 *cStr, const size_t &n ) {
-	const int len = Strlen( cStr );
-	if ( len > 0 && n >= 0 && n <= len ) {
-		Concat( cStr, n );
+	if ( n >= 0 && n <= Strlen( cStr ) ) {
+		return Internal_Append( cStr, n );
 	}
 	return *this;
 }
@@ -634,7 +618,7 @@ Z_String& Z_String::Append( const size_t &n, const INT8 &c ) {
 
 		memset( this->string + len, c, n );
 		this->string[length] = '\0';
-	} 
+	}
 	return *this;
 }
 
@@ -644,11 +628,7 @@ Z_String& Z_String::Append( const size_t &n, const INT8 &c ) {
 //Assigns a new value to the string, replacing its current contents.
 //******
 Z_String& Z_String::Assign( const Z_String &str ) {
-	if ( str.length > 0 ) {
-		this->length = 0;
-		Concat( str.string, str.size );
-	}
-	return *this;
+	return Internal_Assign( str.string, str.length );
 }
 
 //******
@@ -657,9 +637,8 @@ Z_String& Z_String::Assign( const Z_String &str ) {
 //Assigns a new value to the string, replacing its current contents.
 //******
 Z_String& Z_String::Assign( const Z_String &str, const size_t &subpos, const size_t &sublen ) {
-	if ( str.length > 0 && (subpos + sublen) <= str.length ) {
-		this->length = 0;
-		Concat( str.string + subpos, sublen );
+	if ( ( subpos + sublen ) <= str.length ) {
+		return Internal_Assign( str.string + subpos, sublen );
 	}
 	return *this;
 }
@@ -670,11 +649,7 @@ Z_String& Z_String::Assign( const Z_String &str, const size_t &subpos, const siz
 //Assigns a new value to the string, replacing its current contents.
 //******
 Z_String& Z_String::Assign( const INT8 *cStr ) {
-	if ( Strlen( cStr ) > 0 ) {
-		this->length = 0;
-		Concat( cStr, Strlen( cStr ) );
-	}
-	return *this;
+	return Internal_Assign( cStr, strlen( cStr ) );
 }
 
 //******
@@ -683,12 +658,7 @@ Z_String& Z_String::Assign( const INT8 *cStr ) {
 //Assigns a new value to the string, replacing its current contents.
 //******
 Z_String& Z_String::Assign( const INT8 *cStr, const size_t &n ) {
-	const int len = Strlen( cStr );
-	if ( len > 0 && n >= 0 && n <= len ) {
-		this->length = 0;
-		Concat( cStr, n );
-	}
-	return *this;
+	return Internal_Assign( cStr, n );
 }
 
 //******
@@ -710,7 +680,97 @@ Z_String& Z_String::Assign( const size_t &n, const INT8 &c ) {
 	return *this;
 }
 
+//******
+//Swap
+//****** 
+void Z_String::Swap( Z_String &str ) {
+	Z_String tmp( *this );
+	*this = str;
+	str = tmp;
+}
 
+//******
+//SubStr
+//****** 
+Z_String Z_String::SubStr( const size_t pos, const size_t len ) const {
+	int newLen = len;
+
+	if ( pos == this->length ) {
+		return Z_String( "" );
+
+	}
+	else if ( ( pos + len ) > this->length ) {
+		newLen = pos - this->length;
+
+		if ( -newLen ) {
+			throw std::out_of_range( "Substr, pos is greater then string length" );
+		}
+	}
+
+	return Z_String( this->string, pos, newLen );
+}
+
+//******
+//Size
+//****** 
+size_t Z_String::Size() const {
+	return this->size;
+}
+
+//******
+//Shrink_To_fit
+//Decreases the size and make it eqaul to length.
+//******
+void Z_String::Shrink_To_Fit() {
+	if ( this->size > 1 ) {
+		const INT8 *tmp = this->string;
+
+		this->size = this->length +1;
+		this->string = DBG_NEW INT8[this->size];
+
+		memcpy( this->string, tmp, this->length );
+		this->string[this->length] = '\0';
+
+		delete tmp;
+	}
+}
+
+//******
+//Find
+//string
+//****** 
+size_t Z_String::Find( const Z_String &str ) const _NOEXCEPT {
+	return Internal_Find( str.string, str.length );
+}
+
+//******
+//Find
+//c-string
+//****** 
+size_t Z_String::Find( const INT8 *cStr ) const {
+	return Internal_Find( cStr, Strlen( cStr ) );
+}
+
+//******
+//Find
+//buffer
+//****** 
+size_t Z_String::Find( const INT8 *cStr, const size_t &pos, const size_t &n ) const {
+	Z_String tmp( cStr, pos, n );
+	return Internal_Find( tmp.string, tmp.length );
+}
+
+//******
+//Find
+//character
+//****** 
+size_t Z_String::Find( const INT8 &c ) const _NOEXCEPT {
+	INT8 arr[2];
+	arr[0] = c;
+	arr[1] = '\0';
+
+	return Internal_Find( arr, 1 );
+}
 
 //******
 //Concat
@@ -721,7 +781,7 @@ void Z_String::Concat( const INT8 *cStr, const size_t &len ) {
 		this->string = DBG_NEW INT8[this->size];
 
 	}
-	else if ( this->size < this->length + len +1) {
+	else if ( this->size < this->length + len + 1 ) {
 		const INT8 *tmp = this->string;
 
 		this->size += len * this->multiplier;
@@ -741,7 +801,7 @@ void Z_String::Concat( const INT8 *cStr, const size_t &len ) {
 //Strlen
 //****** 
 size_t Z_String::Strlen( const INT8 *cStr ) const {
-	size_t len = 0;
+	int len = 0;
 	while ( cStr[len] != '\0' ) {
 		++len;
 	}
@@ -751,7 +811,7 @@ size_t Z_String::Strlen( const INT8 *cStr ) const {
 //******
 //Abs
 //****** 
-int Z_String::Abs( const int &value ) {
+size_t Z_String::Abs( const int  &value ) const {
 	if ( value < 0 ) {
 		return -value;
 	}
@@ -764,7 +824,7 @@ int Z_String::Abs( const int &value ) {
 //lhs <= rhs return -1;
 //lhs >= rhs return 1;
 //****** 
-int Z_String::StrCmp( const INT8 *cStr1, const INT8 *cStr2 ) const {
+size_t Z_String::StrCmp( const INT8 *cStr1, const INT8 *cStr2 ) const {
 	int s1;
 	int s2;
 	do {
@@ -775,4 +835,66 @@ int Z_String::StrCmp( const INT8 *cStr1, const INT8 *cStr2 ) const {
 	} while ( s1 == s2 );
 	int i = ( s1 < s2 ) ? -1 : ( s1 > s2 );
 	return i;
+}
+
+//******
+//Internal_Back
+//******
+INT8& Z_String::Internal_At( const size_t &pos ) const {
+	if ( pos > this->length ) {
+		throw std::out_of_range( "AT" );
+	}
+	return this->string[pos];
+}
+
+//******
+//Internal_Back
+//******
+INT8 Z_String::Internal_Back() const {
+	if ( this->size > 0 && this->length > 0 ) {
+		return this->string[this->length - 1];
+	}
+	throw std::out_of_range( "String is empty!" );
+}
+
+//******
+//Internal_Assign
+//******
+Z_String& Z_String::Internal_Assign( const INT8 *cStr, const size_t &len ) {
+	if ( len > 0 ) {
+		this->length = 0;
+		Concat( cStr, len );
+	}
+	return *this;
+}
+
+//******
+//Internal_Find
+//******
+size_t Z_String::Internal_Find( const char *cStr, const size_t &len ) const {
+	if (len > 0 && this->string > 0 ) {
+		const char *isFound = strstr( this->string, cStr );
+		if ( isFound ) {
+			return Abs( this->string - isFound );
+		}
+	}
+
+	return npos;
+}
+
+//******
+//Internal_RFind
+//******
+size_t Z_String::Internal_RFind( const INT8 *cStr, const size_t &len ) const {
+
+}
+
+//******
+//Internal_Append
+//******
+Z_String& Z_String::Internal_Append( const INT8 *cStr, const size_t &len ) {
+	if ( len > 0 ) {
+		Concat( cStr, len );
+	}
+	return *this;
 }

@@ -37,7 +37,7 @@ int main() {
 
 	//function Copy()
 	INT8 buffer[20];
-	size_t len = string1.Copy( buffer, 2, 3 );
+	int len = string1.Copy( buffer, 2, 3 );
 	buffer[len] = '\0';
 	Assert_String( buffer, "in", "function Copy();" );
 	
@@ -95,7 +95,7 @@ int main() {
 	string2 = "hello world";
 	Assert_String( string1.Compare( string2 ), 0, "function Compare(string) = 0" );
 
-	//Compare
+	//function Compare
 	string1.Clear();
 	string2.Clear();
 	Assert_String( string1.Compare( string2 ), 0, "function Compare(string) = 0" );
@@ -130,7 +130,49 @@ int main() {
 	string1 = " world";
 	Assert_String( string1.Compare( 5, 6, "hello world" ), 0, "function Compare(c-string) = 0" );
 
+	//function Swap
+	string1 = "hello world";
+	string2 = "babar";
+	string1.Swap( string2 );
+	Assert_String( string1.Data(), "babar", "function Swap" );
+	Assert_String( string2.Data(), "hello world", "function Swap" );
 
+	string1 = "hello world";
+	string2.Clear();
+	string1.Swap( string2 );
+	Assert_String( string1.Data(), "", "function Swap" );
+	Assert_String( string2.Data(), "hello world", "function Swap" );
+
+
+	//function SubStr
+	string1 = "hello babar";
+	string2 = string1.SubStr( 4, 6 );
+	Assert_String( string2.Data(), "o baba", "function SubStr" );
+
+	string2 = string1.SubStr( 11, 6 );
+	Assert_String( string2.Data(), "", "function SubStr" );
+
+	//Uncomment to test!
+	//string2 = string1.SubStr( 12, 6 );
+	//Assert_String( string2.Data(), "", "function SubStr(throws out_of_range)" );
+
+	//function Shrink_To _Fit and function Size().
+	string1 = "babar is home in bed, he is to lazy to get out of bed :)";
+	string1.Shrink_To_Fit();
+	Assert_String( string1.Size(), 57, "function Shrink_To_Fit" );
+
+	//function Find
+	string1 = "lazy";
+	string2 = "babar is home in bed, he is to lazy to get out of bed :)";
+	Assert_String( string2.Find(string1), 31, "function Find(string)" );
+
+	Assert_String( string2.Find( "e" ), 12, "function Find(c-string)" );
+
+	Assert_String( string2.Find( "he is to lazy to", 9, 4 ), 31, "function Find(buffer)" );
+
+	Assert_String( string2.Find( 'e' ), 12, "function Find(character)" );
+
+	//function RFind
 
 
 	//operator =.
