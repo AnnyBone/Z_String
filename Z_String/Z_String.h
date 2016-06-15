@@ -137,9 +137,6 @@ public:
 	INT8& At( const size_t &pos );
 	const INT8& At( const size_t &pos ) const;
 
-	INT8 Back();
-	const INT8 Back() const;
-
 	size_t Capacity() const _NOEXCEPT;
 
 	void Clear() _NOEXCEPT;
@@ -164,14 +161,59 @@ public:
 	size_t Find( const INT8 *cStr, const size_t &pos, const size_t &n ) const; //(buffer)
 	size_t Find( const INT8 &c ) const _NOEXCEPT; //(character)
 
-	//TODO!!!
-	//rfind
+	//RFind
+	size_t RFind( const Z_String &str ) const _NOEXCEPT; //(string)
+	size_t RFind( const INT8 *cStr ) const; //(c-string)
+	size_t RFind( const INT8 *cStr, const size_t &pos, const size_t &n ) const; //(buffer)
+	size_t RFind( const INT8 &c ) const _NOEXCEPT; //(character)
+
 	//Resize
+	void Resize( const size_t &n );
+	void Resize( const size_t &n, const char &c );
+
 	//Reserve
+	void Reserve( const size_t &n = 0 );
+
 	//Replace
+	Z_String& Replace( const size_t &pos, const size_t &len, const Z_String &subStr ); //(string)
+	//Z_String& Replace( const_iterator i1, const_iterator i2, const char *cStr ); //(string)
+
+	Z_String& Replace( const size_t &pos, const size_t &len, const Z_String &subStr, const size_t &subpos, const size_t &sublen = npos ); //(substring)
+
+	Z_String& Replace( const size_t &pos, const size_t &len, const char *subStr ); //(c-string)
+	//Z_String& Replace( const_iterator i1, const_iterator i2, const char *cStr ); //(c-string)
+
+	Z_String& Replace( const size_t &pos, const size_t &len, const char *subStr, const size_t &n ); //(buffer)
+	//Z_String& Replace( const_iterator i1, const_iterator i2, const char *cStr, const size_t &n ); //(buffer)
+
+	Z_String& Replace( const size_t &pos, const size_t &len, const char &subC, const size_t &n ); //(fill)
+	//Z_String& Replace( const_iterator i1, const_iterator i2, const size_t &n, const char &c ); //(fill)
+
+	/*template<class InputIterator>
+	Z_String& Replace (const_iterator i1, const_iterator i2, InputIterator first, InputIterator last); //(range) */
+
+	//Z_String& Replace( const_iterator i1, const_iterator i2, initializer_list<char> il ); //(Initializer list)
+
+
 	//Push_Back
+	void Push_Back( const char &c );
+
 	//Pop_Back
-	//Max_Size
+	void Pop_Back();
+
+	//Max_size
+	size_t Max_Size() const _NOEXCEPT;
+
+	//Back
+	INT8 Back();
+	const INT8 Back() const;
+
+	//Front
+	INT8& Front();
+	const INT8& Front() const;
+
+
+	//TODO!!!
 	//Insert
 	//Get_Allocator
 	//Front
@@ -180,6 +222,7 @@ public:
 	//Find_First_of
 	//Find_First_Not_of
 	//Erase
+	//Max_Size
 
 	const static int npos;
 
@@ -191,6 +234,7 @@ private:
 	size_t length = 0;
 	size_t size = 0;
 	const size_t multiplier = 3;
+	const size_t maxSize = INT_MAX / 2;
 
 	inline size_t Strlen( const INT8 *cStr ) const;
 	inline size_t StrCmp( const INT8 *cStr1, const INT8 *cStr2 ) const;
@@ -201,6 +245,7 @@ private:
 	inline Z_String& Internal_Append( const INT8 *cStr, const size_t &len );
 	inline Z_String& Internal_Assign( const INT8 *cStr, const size_t &len );
 	inline size_t Internal_Find( const INT8 *cStr, const size_t &len ) const;
-	inline size_t Internal_RFind( const INT8 *cStr, const size_t &len ) const;
-
+	inline void Internal_Resize( const size_t n, const char &c );
+	inline void Internal_Shrink_To_Fit(const size_t &n);
+	inline Z_String& Internal_Replace( const size_t &pos, const size_t &len, const char *subStr, const size_t &subLen, const size_t &subStartPos = 0 );
 };

@@ -166,14 +166,85 @@ int main() {
 	string2 = "babar is home in bed, he is to lazy to get out of bed :)";
 	Assert_String( string2.Find(string1), 31, "function Find(string)" );
 
-	Assert_String( string2.Find( "e" ), 12, "function Find(c-string)" );
+	Assert_String( string2.Find( "home" ), 9, "function Find(c-string)" );
 
 	Assert_String( string2.Find( "he is to lazy to", 9, 4 ), 31, "function Find(buffer)" );
 
 	Assert_String( string2.Find( 'e' ), 12, "function Find(character)" );
 
 	//function RFind
+	string1 = "lazy";
+	string2 = "babar is home in bed, he is to lazy to get out of bed :)";
+	Assert_String( string2.RFind( string1 ), 35, "function Find(string)" );
 
+	Assert_String( string2.RFind( "home" ), 13, "function Find(c-string)" );
+
+	Assert_String( string2.RFind( "he is to lazy to", 9, 4 ), 35, "function Find(buffer)" );
+
+	Assert_String( string2.RFind( 'e' ), 13, "function Find(character)" );
+
+	//function Resize
+	string2 = "babar is home in bed, he is to lazy to get out of bed :)";
+	string2.Resize( 5 );
+	Assert_String( string2.Data(), "babar", "function Resize(n)" );
+	
+	string2.Resize( 10, 'c' );
+	Assert_String( string2.Data(), "babarccccc", "function Resize(n, c)" );
+
+	string2 = "babar is home in bed, he is to lazy to get out of bed :)";
+	string2.Reserve( 10 );
+	Assert_String( string2.Capacity(), 11, "function Reserve" );
+
+	int cap = string2.Capacity() * 4; //this->size += len * this->multiplier;
+	string2.Reserve( cap );
+	Assert_String( string2.Capacity(), 44 , "function Reserve" );
+
+	//function Replace
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Shrink_To_Fit();
+	string1.Replace( 16, 3, string2 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace string" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Replace( 16, 3, string2, 0, 5 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace substring" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Replace( 16, 3, string2.C_Str() );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace c-string" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Replace( 16, 3, string2.C_Str(), 5 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace buffer" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Replace( 16, 3, string2.C_Str(), 5 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace fill" );
+
+	//function Max_size
+	Assert_String( string1.Max_Size(), INT_MAX / 2, "function Max_Size" );
+
+	//function Push_Back
+	string1 = "kalle";
+	string1.Push_Back( 's' );
+	Assert_String( string1.Data(), "kalles", "function Push_Back" );
+
+	//function Pop_Back
+	string1 = "kalles";
+	string1.Pop_Back();
+	Assert_String( string1.C_Str(), "kalle", "function Pop_Back" );
+
+	//Front
+	string1 = "nisse";
+	Assert_String( string1.Front(), 'n', "function Front" );
+
+	string1.Front() = 'p';
+	Assert_String( string1.C_Str(), "pisse", "function Front" );
 
 	//operator =.
 	string2 = cStr; //"hej pa dig min van"
