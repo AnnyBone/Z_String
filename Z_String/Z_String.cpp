@@ -3,7 +3,7 @@
 #include <string>
 #include <cmath>
 
-const int Z_String::npos = -1;
+const size_t Z_String::npos = -1;
 
 //******
 //Constructor
@@ -20,7 +20,7 @@ Z_String::Z_String( const INT8 &c ) {
 	arr[0] = c;
 	arr[1] = '\0';
 
-	Concat( arr, 1 );
+	Concat( 1, arr );
 }
 
 //******
@@ -30,7 +30,7 @@ Z_String::Z_String( const INT8 &c ) {
 Z_String::Z_String( const INT8 *cStr ) {
 	const int l = Strlen( cStr );
 	if ( l > 0 ) {
-		Concat( cStr, l );
+		Concat( l, cStr );
 	}
 }
 
@@ -41,7 +41,7 @@ Z_String::Z_String( const INT8 *cStr ) {
 //******
 Z_String::Z_String( const Z_String &str ) {
 	if ( str.length > 0 ) {
-		Concat( str.string, str.length );
+		Concat( str.length, str.string );
 	}
 	else {
 		throw std::out_of_range( "from c-string" );
@@ -57,7 +57,7 @@ Z_String::Z_String( const Z_String& str, const size_t &pos, const size_t &len ) 
 		 pos >= 0 &&
 		 pos + len <= str.length ) {
 
-		Concat( str.string + pos, len );
+		Concat( len, str.string + pos );
 	}
 	else {
 		throw std::out_of_range( "substring" );
@@ -70,7 +70,7 @@ Z_String::Z_String( const Z_String& str, const size_t &pos, const size_t &len ) 
 //******
 Z_String::Z_String( const INT8 *cStr, const size_t &len ) {
 	if ( len > 0 && len <= Strlen( cStr ) ) {
-		Concat( cStr, len );
+		Concat( len, cStr );
 	}
 	else {
 		throw std::out_of_range( "From buffer" );
@@ -83,14 +83,7 @@ Z_String::Z_String( const INT8 *cStr, const size_t &len ) {
 //******
 Z_String::Z_String( const size_t &n, const INT8 &c ) {
 	if ( n > 0 ) {
-		INT8 arr[2];
-		arr[0] = c;
-		arr[1] = '\0';
-
-		Concat( arr, n );
-
-		memset( this->string, c, n );
-		this->string[length] = '\0';
+		Fill( 0, 0, n, c );
 	}
 	else {
 		throw std::out_of_range( "Fill constructor" );
@@ -121,7 +114,7 @@ Z_String::~Z_String() {
 //******
 Z_String& Z_String::operator=( const Z_String &str ) {
 	this->length = 0;
-	Concat( str.string, str.length );
+	Concat( str.length, str.string );
 	return *this;
 }
 
@@ -133,7 +126,7 @@ Z_String& Z_String::operator=( const Z_String &str ) {
 Z_String& Z_String::operator=( const INT8* cStr ) {
 	if ( cStr[0] != '\0' ) {
 		this->length = 0;
-		Concat( cStr, Strlen( cStr ) );
+		Concat( Strlen( cStr ), cStr );
 	}
 	return *this;
 }
@@ -150,7 +143,7 @@ Z_String& Z_String::operator=( const INT8 &c ) {
 	arr[0] = c;
 	arr[1] = '\0';
 
-	Concat( arr, 1 );
+	Concat( 1, arr );
 	return *this;
 }
 
@@ -159,7 +152,7 @@ Z_String& Z_String::operator=( const INT8 &c ) {
 //character
 //******
 Z_String& Z_String::operator += ( const Z_String &str ) {
-	Concat( str.string, str.length );
+	Concat( str.length, str.string );
 	return *this;
 }
 
@@ -168,7 +161,7 @@ Z_String& Z_String::operator += ( const Z_String &str ) {
 //character
 //******
 Z_String& Z_String::operator += ( const INT8 *cStr ) {
-	Concat( cStr, Strlen( cStr ) );
+	Concat( Strlen( cStr ), cStr );
 	return *this;
 }
 
@@ -181,7 +174,7 @@ Z_String& Z_String::operator += ( const INT8 &c ) {
 	arr[0] = c;
 	arr[1] = '\0';
 
-	Concat( arr, 1 );
+	Concat( 1, arr );
 	return *this;
 }
 
@@ -331,14 +324,14 @@ void Z_String::GetInput( std::istream &input, Z_String &string ) {
 		}
 		else if ( i == 3 ) {
 			buffer[3] = '\0';
-			Concat( buffer, i );
+			Concat( i, buffer );
 
 			i = 0;
 		}
 	}
 
 	buffer[i - 1] = '\0';
-	Concat( buffer, i );
+	Concat( i, buffer );
 }
 
 //******
@@ -606,7 +599,7 @@ Z_String& Z_String::Append( const Z_String &str, const size_t &subpos, const siz
 //c-string
 //******
 Z_String& Z_String::Append( const INT8 *cStr ) {
-	return Internal_Append( cStr, strlen(cStr) );
+	return Internal_Append( cStr, strlen( cStr ) );
 }
 
 //******
@@ -626,16 +619,7 @@ Z_String& Z_String::Append( const INT8 *cStr, const size_t &n ) {
 //******
 Z_String& Z_String::Append( const size_t &n, const INT8 &c ) {
 	if ( n >= 0 ) {
-		INT8 arr[2];
-		arr[0] = c;
-		arr[1] = '\0';
-
-		Concat( arr, n );
-
-		const int len = Abs( this->length - n );
-
-		memset( this->string + len, c, n );
-		this->string[length] = '\0';
+		Fill( this->length, 0, n, c );
 	}
 	return *this;
 }
@@ -686,14 +670,7 @@ Z_String& Z_String::Assign( const INT8 *cStr, const size_t &n ) {
 //******
 Z_String& Z_String::Assign( const size_t &n, const INT8 &c ) {
 	if ( n >= 0 ) {
-		INT8 arr[2];
-		arr[0] = c;
-		arr[1] = '\0';
-
-		Concat( arr, n );
-
-		memset( this->string, c, n );
-		this->string[length] = '\0';
+		Fill( 0, this->length, n, c );
 	}
 	return *this;
 }
@@ -740,7 +717,7 @@ size_t Z_String::Size() const {
 //Decreases the size and make it eqaul to length.
 //******
 void Z_String::Shrink_To_Fit() {
-	Internal_Shrink_To_Fit(this->length);
+	Internal_Shrink_To_Fit( this->length );
 }
 
 //******
@@ -827,7 +804,7 @@ void Z_String::Resize( const size_t &n ) {
 //******
 //Resize
 //****** 
-void Z_String::Resize( const size_t &n, const char &c ) {
+void Z_String::Resize( const size_t &n, const INT8 &c ) {
 	Internal_Resize( n, c );
 }
 
@@ -845,9 +822,10 @@ void Z_String::Reserve( const size_t &n ) {
 		this->string[this->length] = '\0';
 
 		delete tmp;
+		tmp = NULL;
 	}
 	else {
-		Internal_Shrink_To_Fit(n);
+		Internal_Shrink_To_Fit( n );
 	}
 }
 
@@ -864,22 +842,22 @@ Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const Z_Strin
 //substring
 //****** 
 Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const Z_String &subStr, const size_t &subPos, const size_t &subLen ) {
-	return Internal_Replace(pos, len, subStr.string, subLen, subPos);
+	return Internal_Replace( pos, len, subStr.string, subLen, subPos );
 }
 
 //******
 //Replace
 //c-string
 //****** 
-Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const char *subStr ) {
-	return Internal_Replace( pos, len, subStr, Strlen(subStr ), 0 );
+Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const INT8 *subStr ) {
+	return Internal_Replace( pos, len, subStr, Strlen( subStr ), 0 );
 }
 
 //******
 //Replace
 //buffer
 //****** 
-Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const char *subStr, const size_t &n ) {
+Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const INT8 *subStr, const size_t &n ) {
 	return Internal_Replace( pos, len, subStr, n, 0 );
 }
 
@@ -887,22 +865,18 @@ Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const char *s
 //Replace
 //fill
 //****** 
-Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const char &subC, const size_t &n ) {
-	char arr[1];
-	arr[0] = subC;
-	arr[1] = '\0';
-
-	return Internal_Replace( pos, len, arr, n, 0 );
+Z_String& Z_String::Replace( const size_t &pos, const size_t &len, const size_t &n, const INT8 &subC ) {
+	return Fill( pos, len, n, subC );
 }
 
 //******
 //Push_Back
 //****** 
-void Z_String::Push_Back( const char &c ) {
-	char arr[2];
+void Z_String::Push_Back( const INT8 &c ) {
+	INT8 arr[2];
 	arr[0] = c;
 	arr[1] = '\0';
-	Concat( arr, 1 );
+	Concat( 1, arr );
 }
 
 //******
@@ -921,9 +895,69 @@ size_t Z_String::Max_Size() const _NOEXCEPT {
 }
 
 //******
+//Erase
+//******
+Z_String& Z_String::Erase( const size_t &pos, const size_t &len ) {
+	if ( pos > this->length ) {
+		throw std::out_of_range( "Erase" );
+	}
+	else {
+		Z_String str;
+		str.Append( this->string, pos );
+
+		if ( len != npos ) {
+			str.Append( this->string + pos + len );
+		}
+
+		*this = str;
+	}
+	return *this;
+}
+
+//******
+//Insert
+//string
+//****** 
+Z_String& Z_String::Insert( const size_t &pos, const Z_String &str ) {
+	return Internal_Insert( pos, str.string, 0, str.length );
+}
+
+//******
+//Insert
+//substring
+//****** 
+Z_String& Z_String::Insert( const size_t &pos, const Z_String &str, const size_t &subPos, const size_t &subLen ) {
+	return Internal_Insert( pos, str.string, subPos, subLen );
+}
+
+//******
+//Insert
+//c-string
+//****** 
+Z_String& Z_String::Insert( const size_t &pos, const char *subStr ) {
+	return Internal_Insert( pos, subStr, 0, Strlen( subStr ) );
+}
+
+//******
+//Insert
+//buffer
+//****** 
+Z_String& Z_String::Insert( const size_t &pos, const char *subStr, const size_t &n ) {
+	return Internal_Insert( pos, subStr, 0, n );
+}
+
+//******
+//Insert
+//fill
+//****** 
+Z_String& Z_String::Insert( const size_t &pos, const size_t n, const char &c ) {
+	return Fill( pos, 0, n, c );
+}
+
+//******
 //Concat
 //****** 
-void Z_String::Concat( const INT8 *cStr, const size_t &len ) {
+void Z_String::Concat( const size_t &len, const INT8 *cStr ) {
 	if ( this->size == 0 ) {
 		this->size += len * this->multiplier;
 		this->string = DBG_NEW INT8[this->size];
@@ -938,11 +972,17 @@ void Z_String::Concat( const INT8 *cStr, const size_t &len ) {
 		memcpy( this->string, tmp, this->length );
 
 		delete tmp;
+		tmp = NULL;
 	}
 
-	memcpy( string + this->length, cStr, len );
-	this->length += len;
-	this->string[this->length] = '\0';
+	if ( cStr ) {
+		memcpy( string + this->length, cStr, len );
+		this->length += len;
+		this->string[this->length] = '\0';
+	}
+	else {
+		this->string[this->length] = '\0';
+	}
 }
 
 //******
@@ -1011,7 +1051,7 @@ INT8 Z_String::Internal_Back() const {
 Z_String& Z_String::Internal_Assign( const INT8 *cStr, const size_t &len ) {
 	if ( len > 0 ) {
 		this->length = 0;
-		Concat( cStr, len );
+		Concat( len, cStr );
 	}
 	return *this;
 }
@@ -1019,11 +1059,11 @@ Z_String& Z_String::Internal_Assign( const INT8 *cStr, const size_t &len ) {
 //******
 //Internal_Find
 //******
-size_t Z_String::Internal_Find( const char *cStr, const size_t &offset ) const {
-	if (cStr && this->string > 0 ) {
-		const char *isFound = strstr( this->string, cStr );
+size_t Z_String::Internal_Find( const INT8 *cStr, const size_t &offset ) const {
+	if ( cStr && this->string > 0 ) {
+		const INT8 *isFound = strstr( this->string, cStr );
 		if ( isFound ) {
-			return Abs( this->string - (isFound + offset) );
+			return Abs( this->string - ( isFound + offset ) );
 		}
 	}
 
@@ -1035,7 +1075,7 @@ size_t Z_String::Internal_Find( const char *cStr, const size_t &offset ) const {
 //******
 Z_String& Z_String::Internal_Append( const INT8 *cStr, const size_t &len ) {
 	if ( len > 0 ) {
-		Concat( cStr, len );
+		Concat( len, cStr );
 	}
 	return *this;
 }
@@ -1043,19 +1083,9 @@ Z_String& Z_String::Internal_Append( const INT8 *cStr, const size_t &len ) {
 //******
 //Internal_Resize
 //******
-void Z_String::Internal_Resize( const size_t n, const char &c ) {
+void Z_String::Internal_Resize( const size_t n, const INT8 &c ) {
 	if ( n > this->length ) {
-		INT8 arr[2];
-		arr[0] = c;
-		arr[1] = '\0';
-
-		Concat( arr, n );
-
-		const int len = Strlen( this->string );
-		memset( this->string + len, c, n - len );
-		
-		this->length = n;
-		this->string[length] = '\0';
+		Fill( this->length, 0, Abs(n - this->length), c );
 	}
 	else {
 		this->length = n;
@@ -1066,34 +1096,90 @@ void Z_String::Internal_Resize( const size_t n, const char &c ) {
 //******
 //Internal_Shrink_To_Fit
 //******
-void Z_String::Internal_Shrink_To_Fit(const size_t &n) {
+void Z_String::Internal_Shrink_To_Fit( const size_t &n ) {
 	if ( this->size > 1 ) {
 		const INT8 *tmp = this->string;
 
 		this->size = n + 1;
-		this->length = this->size -1;
+		this->length = this->size - 1;
 		this->string = DBG_NEW INT8[this->size];
 
 		memcpy( this->string, tmp, this->length );
 		this->string[this->length] = '\0';
 
 		delete tmp;
+		tmp = NULL;
 	}
 }
 
-Z_String& Z_String::Internal_Replace( const size_t &startPos, const size_t &len, const char *subStr, const size_t &subLen, const size_t &subStartPos ) {
-	if ( subStr && this->length > 0 ) {
-		if ( startPos > this->length || subStartPos > subLen ) {
-			throw std::out_of_range( "Internal_Replace" );
-		}
-		else {
-			Z_String str;
-			str.Append( this->string, startPos );
-			str.Append( subStr + subStartPos, subLen );
-			str.Append( this->string + startPos + len );
+//******
+//Internal_Replace
+//******
+Z_String& Z_String::Internal_Replace( const size_t &startPos, const size_t &len, const INT8 *subStr, const size_t &subLen, const size_t &subStartPos ) {
+	return Fill( startPos, len, subLen, subStr + subStartPos );
+}
 
-			*this = str;
-		}
+//******
+//Internal_Insert
+//******
+Z_String& Z_String::Internal_Insert( const size_t &startPos, const char *subStr, const size_t &subPos, const size_t &subLen ) {
+	return Internal_Replace( startPos, subLen - 2, subStr, subLen, subPos );
+}
+
+//******
+//Fill
+//len decides how many characters to be overwriten.
+//******
+Z_String& Z_String::Fill( const size_t &pos, const size_t &len, const size_t &n, const char &c ) {
+	if ( pos <= this->length && len <= this->length ) {
+		const INT8 *tmp = this->string;
+		this->size += n * this->multiplier;
+		this->string = DBG_NEW INT8[this->size];
+
+		memcpy( this->string, tmp, pos );
+
+		memset( this->string + pos, c, n );
+		memcpy( this->string + pos + n, tmp + pos + len, this->length - pos - len );
+
+		this->length += n - len;
+		this->string[this->length] = '\0';
+
+		delete tmp;
+		tmp = NULL;
 	}
+	else {
+		throw std::out_of_range( "Fill" );
+	}
+
 	return *this;
 }
+
+//******
+//Fill
+//len decides how many characters to be overwriten.
+//******
+Z_String& Z_String::Fill( const size_t &pos, const size_t &len, const size_t &n, const char *cStr ) {
+	if ( pos <= this->length && len <= this->length ) {
+		const INT8 *tmp = this->string;
+		this->size += n * this->multiplier;
+		this->string = DBG_NEW INT8[this->size];
+
+		memcpy( this->string, tmp, pos );
+
+		memcpy( this->string + pos, cStr, n );
+		memcpy( this->string + pos + n, tmp + pos + len, this->length - pos - len );
+
+		this->length += n - len;
+		this->string[this->length] = '\0';
+
+		delete tmp;
+		tmp = NULL;
+	}
+	else {
+		throw std::out_of_range( "Fill" );
+	}
+
+	return *this;
+}
+
+//Replace fill är felaktigt implementerad, testfallet är felaktigt!!!

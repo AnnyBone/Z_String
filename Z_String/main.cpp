@@ -89,7 +89,7 @@ int main() {
 	Assert_String( string1.Data(), "hello ", "function Assign(buffer)" );
 
 	string1.Assign( 6, 'g' );
-	Assert_String( string1.Data(), "ggggggg", "function Assign(fill)" );
+	Assert_String( string1.Data(), "gggggg", "function Assign(fill)" );
 
 	string1 = "hello world";
 	string2 = "hello world";
@@ -217,9 +217,8 @@ int main() {
 	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace c-string" );
 
 	string1 = "kalle is in his car, he is trying to get out";
-	string2 = "house";
-	string1.Replace( 16, 3, string2.C_Str(), 5 );
-	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Replace buffer" );
+	string1.Replace( 16, 3, 5, 'C' );
+	Assert_String( string1.Data(), "kalle is in his CCCCC, he is trying to get out", "funiction Replace buffer" );
 
 	string1 = "kalle is in his car, he is trying to get out";
 	string2 = "house";
@@ -239,12 +238,56 @@ int main() {
 	string1.Pop_Back();
 	Assert_String( string1.C_Str(), "kalle", "function Pop_Back" );
 
-	//Front
+	//function Front
 	string1 = "nisse";
 	Assert_String( string1.Front(), 'n', "function Front" );
 
 	string1.Front() = 'p';
 	Assert_String( string1.C_Str(), "pisse", "function Front" );
+
+	//function Erase
+	string1 = "kalle is in his car, he is trying to get out";
+	string1.Erase(0, 6);
+	Assert_String( string1.Data(), "is in his car, he is trying to get out", "function Erase" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string1.Erase( 7, 3 );
+	Assert_String( string1.Data(), "kalle in his car, he is trying to get out", "function Erase" );
+
+	string1.Erase();
+	Assert_String( string1.Data(), "", "function Erase" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string1.Erase( 5 );
+	Assert_String( string1.Data(), "kalle", "function Erase" );
+
+
+	//function Insert
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Shrink_To_Fit();
+	string1.Insert( 16, string2 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Insert string" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Insert( 16, string2, 0, 5 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Insert substring" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Insert( 16, string2.C_Str() );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Insert c-string" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string2 = "house";
+	string1.Insert( 16, string2.C_Str(), 5 );
+	Assert_String( string1.Data(), "kalle is in his house, he is trying to get out", "funiction Insert buffer" );
+
+	string1 = "kalle is in his car, he is trying to get out";
+	string1.Insert( 16, 10, 'c' );
+	Assert_String( string1.Data(), "kalle is in his cccccccccccar, he is trying to get out", "funiction Insert fill" );
+
 
 	//operator =.
 	string2 = cStr; //"hej pa dig min van"

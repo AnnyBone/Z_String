@@ -169,7 +169,7 @@ public:
 
 	//Resize
 	void Resize( const size_t &n );
-	void Resize( const size_t &n, const char &c );
+	void Resize( const size_t &n, const INT8 &c );
 
 	//Reserve
 	void Reserve( const size_t &n = 0 );
@@ -186,7 +186,7 @@ public:
 	Z_String& Replace( const size_t &pos, const size_t &len, const char *subStr, const size_t &n ); //(buffer)
 	//Z_String& Replace( const_iterator i1, const_iterator i2, const char *cStr, const size_t &n ); //(buffer)
 
-	Z_String& Replace( const size_t &pos, const size_t &len, const char &subC, const size_t &n ); //(fill)
+	Z_String& Replace( const size_t &pos, const size_t &len, const size_t &n, const char &subC ); //(fill)
 	//Z_String& Replace( const_iterator i1, const_iterator i2, const size_t &n, const char &c ); //(fill)
 
 	/*template<class InputIterator>
@@ -196,7 +196,7 @@ public:
 
 
 	//Push_Back
-	void Push_Back( const char &c );
+	void Push_Back( const INT8 &c );
 
 	//Pop_Back
 	void Pop_Back();
@@ -212,19 +212,32 @@ public:
 	INT8& Front();
 	const INT8& Front() const;
 
+	//Erase
+	Z_String& Erase( const size_t &pos = 0, const size_t &len = npos ); //(sequence)
+	//iterator Erase( const_iterator p ); //character
+	//iterator erase( const_iterator first, const_iterator last ); //(range)
+
+	//Insert
+	Z_String& Insert( const size_t &pos, const Z_String &str ); //(string)
+	Z_String& Insert( const size_t &pos, const Z_String &str, const size_t &subPos, const size_t &subLen = npos ); //(substring)
+	Z_String& Insert( const size_t &pos, const char *subStr ); //(c-string)
+	Z_String& Insert( const size_t &pos, const char *subStr, const size_t &n ); //(buffer)
+	Z_String& Insert( const size_t &pos, const size_t n, const char &c ); //(fill)
+	//iterator insert (const_iterator p, size_t n, char c); //(fill)
+	//iterator insert (const_iterator p, char c); //(single character)
+	/*template <class InputIterator>
+	iterator insert( iterator p, InputIterator first, InputIterator last );*/ //(range)
+	//Z_String& insert (const_iterator p, initializer_list<char> il); //(initializer list)
+
 
 	//TODO!!!
-	//Insert
 	//Get_Allocator
-	//Front
 	//Find_Last_Of
 	//Find_Last_Not_Of
 	//Find_First_of
 	//Find_First_Not_of
-	//Erase
-	//Max_Size
 
-	const static int npos;
+	static const size_t npos;
 
 protected:
 	void Z_String::GetInput( std::istream &input, Z_String &string );
@@ -238,14 +251,17 @@ private:
 
 	inline size_t Strlen( const INT8 *cStr ) const;
 	inline size_t StrCmp( const INT8 *cStr1, const INT8 *cStr2 ) const;
-	inline void Concat( const INT8 *cStr, const size_t &len );
+	inline void Concat( const size_t &len, const INT8 *cStr = NULL );
 	inline size_t Abs( const int &value ) const;
 	inline INT8 Internal_Back() const;
 	inline INT8& Internal_At( const size_t &pos ) const;
 	inline Z_String& Internal_Append( const INT8 *cStr, const size_t &len );
 	inline Z_String& Internal_Assign( const INT8 *cStr, const size_t &len );
 	inline size_t Internal_Find( const INT8 *cStr, const size_t &len ) const;
-	inline void Internal_Resize( const size_t n, const char &c );
+	inline void Internal_Resize( const size_t n, const INT8 &c );
 	inline void Internal_Shrink_To_Fit(const size_t &n);
-	inline Z_String& Internal_Replace( const size_t &pos, const size_t &len, const char *subStr, const size_t &subLen, const size_t &subStartPos = 0 );
+	inline Z_String& Internal_Replace( const size_t &pos, const size_t &len, const INT8 *subStr, const size_t &subLen, const size_t &subStartPos = 0 );
+	inline Z_String& Internal_Insert( const size_t &pos, const char *subStr, const size_t &subPos, const size_t &subLen );
+	inline Z_String& Fill( const size_t &pos, const size_t &len, const size_t &n, const char &c );
+	inline Z_String& Fill( const size_t &pos, const size_t &len, const size_t &n, const char *cStr );
 };
